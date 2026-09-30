@@ -1,0 +1,93 @@
+from collections import deque
+
+
+def display(state):
+    print()
+    for i in range(0, 9, 3):
+        print(state[i], state[i + 1], state[i + 2])
+    print()
+
+
+def get_neighbors(state):
+    neighbors = []
+
+    blank = state.index(0)
+
+    row = blank // 3
+    col = blank % 3
+
+    moves = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    for dr, dc in moves:
+        new_row = row + dr
+        new_col = col + dc
+
+        if 0 <= new_row < 3 and 0 <= new_col < 3:
+
+            new_blank = new_row * 3 + new_col
+
+            new_state = list(state)
+
+            new_state[blank], new_state[new_blank] = \
+                new_state[new_blank], new_state[blank]
+
+            neighbors.append(tuple(new_state))
+
+    return neighbors
+
+
+print("Enter the initial 8-Puzzle configuration.")
+print("Enter numbers from 0 to 8.")
+print("Use 0 for the blank space.")
+
+initial = tuple(map(int, input().split()))
+
+goal = (1, 2, 3,
+        4, 5, 6,
+        7, 8, 0)
+
+
+if len(initial) != 9 or set(initial) != set(range(9)):
+    print("Invalid input!")
+
+else:
+    print("\nInitial State:")
+    display(initial)
+
+    queue = deque()
+    queue.append((initial, [initial]))
+
+    visited = set()
+    visited.add(initial)
+
+    solution_found = False
+
+    while queue:
+
+        state, path = queue.popleft()
+
+        if state == goal:
+
+            print("Solution Found!")
+            print("Number of moves:", len(path) - 1)
+
+            print("\nSteps:")
+
+            for step in path:
+                display(step)
+
+            solution_found = True
+            break
+
+        for next_state in get_neighbors(state):
+
+            if next_state not in visited:
+
+                visited.add(next_state)
+
+                queue.append(
+                    (next_state, path + [next_state])
+                )
+
+    if not solution_found:
+        print("No solution exists.")
