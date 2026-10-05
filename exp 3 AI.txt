@@ -1,0 +1,98 @@
+from collections import deque
+
+
+def solve_water_jug(capacity1, capacity2, target):
+
+    # Initial state: both jugs are empty
+    initial = (0, 0)
+
+    # Queue stores current state and path
+    queue = deque()
+    queue.append((initial, [initial]))
+
+    # Store visited states
+    visited = set()
+    visited.add(initial)
+
+    while queue:
+
+        (jug1, jug2), path = queue.popleft()
+
+        # Check whether target is reached
+        if jug1 == target or jug2 == target:
+            return path
+
+        next_states = []
+
+        # 1. Fill Jug 1
+        next_states.append((capacity1, jug2))
+
+        # 2. Fill Jug 2
+        next_states.append((jug1, capacity2))
+
+        # 3. Empty Jug 1
+        next_states.append((0, jug2))
+
+        # 4. Empty Jug 2
+        next_states.append((jug1, 0))
+
+        # 5. Pour Jug 1 -> Jug 2
+        amount = min(jug1, capacity2 - jug2)
+        next_states.append(
+            (jug1 - amount, jug2 + amount)
+        )
+
+        # 6. Pour Jug 2 -> Jug 1
+        amount = min(jug2, capacity1 - jug1)
+        next_states.append(
+            (jug1 + amount, jug2 - amount)
+        )
+
+        # Add new states to queue
+        for state in next_states:
+
+            if state not in visited:
+                visited.add(state)
+
+                queue.append(
+                    (state, path + [state])
+                )
+
+    return None
+
+
+# Get input from user
+capacity1 = int(input("Enter capacity of Jug 1: "))
+capacity2 = int(input("Enter capacity of Jug 2: "))
+target = int(input("Enter target amount: "))
+
+
+# Check whether target is possible
+if target > max(capacity1, capacity2):
+
+    print("Target cannot be measured.")
+
+else:
+
+    solution = solve_water_jug(
+        capacity1,
+        capacity2,
+        target
+    )
+
+    if solution:
+
+        print("\nSolution found!")
+        print("Steps:")
+
+        for i, state in enumerate(solution):
+
+            print(
+                "Step", i,
+                ": Jug 1 =", state[0],
+                "Jug 2 =", state[1]
+            )
+
+    else:
+
+        print("No solution exists.")
