@@ -1,0 +1,113 @@
+def solve_cryptarithm(word1, word2, result):
+    
+    # Get all unique letters
+    letters = set(word1 + word2 + result)
+
+    # If more than 10 letters, no solution is possible
+    if len(letters) > 10:
+        return None
+
+    letters = list(letters)
+
+    # Letters at the beginning cannot be zero
+    leading_letters = {word1[0], word2[0], result[0]}
+
+    # Store digit assigned to each letter
+    assignment = {}
+
+    # Store digits that are already used
+    used_digits = set()
+
+    def word_to_number(word):
+        number = 0
+
+        for letter in word:
+            number = number * 10 + assignment[letter]
+
+        return number
+
+    def backtrack(index):
+
+        # All letters have been assigned
+        if index == len(letters):
+
+            num1 = word_to_number(word1)
+            num2 = word_to_number(word2)
+            num_result = word_to_number(result)
+
+            if num1 + num2 == num_result:
+                return True
+
+            return False
+
+        letter = letters[index]
+
+        # Try digits from 0 to 9
+        for digit in range(10):
+
+            # Digit already used
+            if digit in used_digits:
+                continue
+
+            # Leading letter cannot be zero
+            if digit == 0 and letter in leading_letters:
+                continue
+
+            # Assign digit
+            assignment[letter] = digit
+            used_digits.add(digit)
+
+            # Try next letter
+            if backtrack(index + 1):
+                return True
+
+            # Backtrack
+            del assignment[letter]
+            used_digits.remove(digit)
+
+        return False
+
+    if backtrack(0):
+        return assignment
+
+    return None
+
+
+# Get input from user
+word1 = input("Enter first word: ").upper()
+word2 = input("Enter second word: ").upper()
+result = input("Enter result word: ").upper()
+
+
+# Check input
+if not word1.isalpha() or not word2.isalpha() or not result.isalpha():
+
+    print("Please enter words containing only letters.")
+
+else:
+
+    solution = solve_cryptarithm(word1, word2, result)
+
+    if solution:
+
+        print("\nSolution Found!")
+
+        print("\nLetter-Digit Mapping:")
+
+        for letter in sorted(solution):
+            print(letter, "=", solution[letter])
+
+        # Convert words to numbers
+        num1 = ''.join(str(solution[x]) for x in word1)
+        num2 = ''.join(str(solution[x]) for x in word2)
+        num_result = ''.join(str(solution[x]) for x in result)
+
+        print("\nEquation:")
+        print(num1)
+        print("+", num2)
+        print("--------")
+        print(num_result)
+
+    else:
+
+        print("\nNo solution exists.")
