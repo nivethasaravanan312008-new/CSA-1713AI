@@ -1,0 +1,134 @@
+from collections import deque
+
+
+def is_safe(m_left, c_left, m_right, c_right):
+    # Check left side
+    if m_left < 0 or c_left < 0:
+        return False
+
+    if m_right < 0 or c_right < 0:
+        return False
+
+    # Missionaries should not be outnumbered on the left
+    if m_left > 0 and c_left > m_left:
+        return False
+
+    # Missionaries should not be outnumbered on the right
+    if m_right > 0 and c_right > m_right:
+        return False
+
+    return True
+
+
+def solve_missionaries_cannibals(m, c):
+
+    # State:
+    # (missionaries_left, cannibals_left, boat_position)
+
+    # Boat position:
+    # 0 = Left
+    # 1 = Right
+
+    initial = (m, c, 0)
+    goal = (0, 0, 1)
+
+    queue = deque()
+    queue.append((initial, [initial]))
+
+    visited = set()
+    visited.add(initial)
+
+    # Possible boat combinations
+    moves = [
+        (1, 0),   # 1 missionary
+        (2, 0),   # 2 missionaries
+        (0, 1),   # 1 cannibal
+        (0, 2),   # 2 cannibals
+        (1, 1)    # 1 missionary + 1 cannibal
+    ]
+
+    while queue:
+
+        state, path = queue.popleft()
+
+        m_left, c_left, boat = state
+
+        # Goal reached
+        if state == goal:
+            return path
+
+        for missionaries, cannibals in moves:
+
+            # Boat is on the left
+            if boat == 0:
+
+                new_m_left = m_left - missionaries
+                new_c_left = c_left - cannibals
+                new_boat = 1
+
+            # Boat is on the right
+            else:
+
+                new_m_left = m_left + missionaries
+                new_c_left = c_left + cannibals
+                new_boat = 0
+
+            new_m_right = m - new_m_left
+            new_c_right = c - new_c_left
+
+            # Check boat capacity
+            if missionaries + cannibals > 2:
+                continue
+
+            # At least one person must travel
+            if missionaries + cannibals == 0:
+                continue
+
+            # Check whether the new state is safe
+            if not is_safe(
+                new_m_left,
+                new_c_left,
+                new_m_right,
+                new_c_right
+            ):
+                continue
+
+            new_state = (
+                new_m_left,
+                new_c_left,
+                new_boat
+            )
+
+            if new_state not in visited:
+
+                visited.add(new_state)
+
+                queue.append(
+                    (new_state, path + [new_state])
+                )
+
+    return None
+
+
+# Get input from user
+m = int(input("Enter number of missionaries: "))
+c = int(input("Enter number of cannibals: "))
+
+
+solution = solve_missionaries_cannibals(m, c)
+
+
+if solution:
+
+    print("\nSolution Found!")
+    print("\nState format:")
+    print("(Missionaries on Left, Cannibals on Left, Boat Position)")
+    print("Boat Position: 0 = Left, 1 = Right\n")
+
+    for i, state in enumerate(solution):
+
+        print("Step", i, ":", state)
+
+else:
+
+    print("\nNo solution exists.")
