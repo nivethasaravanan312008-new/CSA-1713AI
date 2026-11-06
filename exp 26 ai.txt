@@ -1,0 +1,46 @@
+% Best First Search Algorithm
+
+edge(s, a).
+edge(s, b).
+edge(a, c).
+edge(a, d).
+edge(b, e).
+edge(c, g).
+edge(d, g).
+edge(e, g).
+
+heuristic(s, 7).
+heuristic(a, 6).
+heuristic(b, 4).
+heuristic(c, 2).
+heuristic(d, 1).
+heuristic(e, 3).
+heuristic(g, 0).
+
+best_first(Start, Goal, Path) :-
+    heuristic(Start, H),
+    search([node(H, [Start])], Goal, [], RevPath),
+    reverse(RevPath, Path).
+
+search([node(_, [Goal|Rest])|_], Goal, _, [Goal|Rest]).
+
+search([node(_, [Current|Rest])|Open], Goal, Visited, Path) :-
+    (   Current = Goal
+    ->  Path = [Current|Rest]
+    ;   member(Current, Visited)
+    ->  search(Open, Goal, Visited, Path)
+    ;   findall(node(H, [Next,Current|Rest]),
+            (edge(Current, Next),
+             \+ member(Next, Visited),
+             heuristic(Next, H)),
+            Children),
+        append(Open, Children, NewOpen),
+        sort_nodes(NewOpen, Sorted),
+        search(Sorted, Goal, [Current|Visited], Path)
+    ).
+
+sort_nodes(Nodes, Sorted) :-
+    predsort(compare_nodes, Nodes, Sorted).
+
+compare_nodes(Order, node(H1,_), node(H2,_)) :-
+    compare(Order, H1, H2).
