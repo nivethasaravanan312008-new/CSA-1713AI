@@ -1,0 +1,30 @@
+% Medical Diagnosis System
+
+diagnose(flu) :-
+    symptom(fever),
+    symptom(cough),
+    symptom(body_pain).
+
+diagnose(common_cold) :-
+    symptom(sneezing),
+    symptom(runny_nose),
+    symptom(cough).
+
+diagnose(malaria) :-
+    symptom(fever),
+    symptom(chills),
+    symptom(sweating).
+
+diagnose(allergy) :-
+    symptom(sneezing),
+    symptom(itchy_eyes),
+    symptom(runny_nose).
+
+% Symptoms entered by the user
+
+symptom(fever).
+symptom(cough).
+symptom(body_pain).
+
+% Query:
+% ?- diagnose(Disease).
