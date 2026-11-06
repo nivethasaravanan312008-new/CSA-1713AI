@@ -1,0 +1,37 @@
+% Forward Chaining Algorithm
+
+% Initial Facts
+fact(rain).
+fact(cold).
+
+% Rules
+rule(wet_ground, [rain]).
+rule(slippery, [wet_ground]).
+rule(stay_inside, [rain, cold]).
+
+% Check whether all conditions are known
+check([],_).
+check([H|T], Facts) :-
+    member(H, Facts),
+    check(T, Facts).
+
+% Forward Chaining
+forward_chain(Facts) :-
+    findall(X, fact(X), Initial),
+    derive(Initial, Facts).
+
+derive(Known, Final) :-
+    (rule(New, Conditions),
+     check(Conditions, Known),
+     \+ member(New, Known)
+    ->
+     derive([New|Known], Final)
+    ;
+     Final = Known
+    ).
+
+% Required Queries:
+% ?- forward_chain(Facts).
+% ?- forward_chain(Facts), member(wet_ground, Facts).
+% ?- forward_chain(Facts), member(slippery, Facts).
+% ?- forward_chain(Facts), member(stay_inside, Facts).
