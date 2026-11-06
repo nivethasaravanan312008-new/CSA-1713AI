@@ -1,0 +1,36 @@
+
+% Facts about birds
+
+bird(sparrow).
+bird(pigeon).
+bird(eagle).
+bird(parrot).
+bird(penguin).
+bird(ostrich).
+
+% Birds that can fly
+
+flying_bird(sparrow).
+flying_bird(pigeon).
+flying_bird(eagle).
+flying_bird(parrot).
+
+% Birds that cannot fly
+
+flightless_bird(penguin).
+flightless_bird(ostrich).
+
+% Rule to check flying ability
+
+can_fly(Bird) :-
+    ( flying_bird(Bird) ->
+        format('~w can fly.~n', [Bird])
+    ;
+      flightless_bird(Bird) ->
+        format('~w cannot fly.~n', [Bird])
+    ;
+      bird(Bird) ->
+        format('Flight ability of ~w is unknown.~n', [Bird])
+    ;
+        format('~w is not in the bird database.~n', [Bird])
+    ).
