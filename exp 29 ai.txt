@@ -1,0 +1,31 @@
+% Backward Chaining Algorithm
+
+% Initial Facts
+fact(human(socrates)).
+fact(human(plato)).
+fact(philosopher(socrates)).
+
+% Rules
+rule(mortal(X), [human(X)]).
+rule(wise(X), [philosopher(X)]).
+
+% Backward Chaining
+backward_chain(Goal) :-
+    fact(Goal), !.
+
+backward_chain(Goal) :-
+    rule(Goal, Conditions),
+    prove_all(Conditions).
+
+% Check all conditions
+prove_all([]).
+
+prove_all([H|T]) :-
+    backward_chain(H),
+    prove_all(T).
+
+% Required Queries:
+% ?- backward_chain(mortal(socrates)).
+% ?- backward_chain(mortal(plato)).
+% ?- backward_chain(wise(socrates)).
+% ?- backward_chain(wise(plato)).
