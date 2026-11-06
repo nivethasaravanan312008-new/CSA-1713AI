@@ -1,0 +1,29 @@
+
+% Diet Suggestion System Based on Disease
+
+% Diet recommendations for different diseases
+
+diet(diabetes, 'Whole grains, green vegetables, pulses and low-sugar fruits').
+diet(hypertension, 'Low-salt foods, fruits, vegetables and whole grains').
+diet(obesity, 'Vegetables, fruits, lean protein and portion-controlled meals').
+diet(anemia, 'Iron-rich foods like spinach, beans and lentils').
+diet(ulcer, 'Mild, non-spicy foods and smaller frequent meals').
+
+% Rule to suggest diet
+
+suggest_diet(Disease) :-
+    diet(Disease, Food),
+    write('Disease: '),
+    write(Disease),
+    nl,
+    write('Suggested Diet: '),
+    write(Food),
+    nl.
+
+% Rule for unknown diseases
+
+suggest_diet(Disease) :-
+    \+ diet(Disease, _),
+    write('No diet information available for '),
+    write(Disease),
+    nl.
