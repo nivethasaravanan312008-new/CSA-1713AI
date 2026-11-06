@@ -1,0 +1,80 @@
+
+% Monkey and Banana Problem
+
+% Initial state:
+% Monkey is at window, box is at window,
+% monkey is on floor and does not have banana.
+
+initial_state(state(window, window, floor, no)).
+
+% Banana is located at middle
+banana(middle).
+
+% Possible movements
+adjacent(window, middle).
+adjacent(middle, window).
+adjacent(middle, door).
+adjacent(door, middle).
+
+% Push the box
+move(state(M, M, floor, no),
+     state(To, To, floor, no),
+     push_box(M, To)) :-
+    adjacent(M, To).
+
+% Walk
+move(state(M, B, floor, no),
+     state(To, B, floor, no),
+     walk(M, To)) :-
+    adjacent(M, To).
+
+% Climb onto the box
+move(state(M, M, floor, no),
+     state(M, M, on_box, no),
+     climb_box).
+
+% Grasp the banana
+move(state(M, B, on_box, no),
+     state(M, B, on_box, yes),
+     grasp_banana) :-
+    banana(M),
+    M = B.
+
+% Goal state
+goal(state(_, _, _, yes)).
+
+% Find a solution
+solve :-
+    initial_state(Start),
+    plan(Start, [Start], Actions),
+    show_actions(Actions).
+
+plan(State, _, []) :-
+    goal(State).
+
+plan(State, Visited, [Action|Rest]) :-
+    move(State, Next, Action),
+    \+ member(Next, Visited),
+    plan(Next, [Next|Visited], Rest).
+
+% Display solution
+show_actions([]) :-
+    write('Monkey has got the banana!'), nl.
+
+show_actions([push_box(From, To)|Rest]) :-
+    write('Monkey pushes the box from '),
+    write(From), write(' to '), write(To), nl,
+    show_actions(Rest).
+
+show_actions([climb_box|Rest]) :-
+    write('Monkey climbs onto the box.'), nl,
+    show_actions(Rest).
+
+show_actions([grasp_banana|Rest]) :-
+    write('Monkey grasps the banana.'), nl,
+    show_actions(Rest).
+
+show_actions([walk(From, To)|Rest]) :-
+    write('Monkey walks from '),
+    write(From), write(' to '), write(To), nl,
+    show_actions(Rest).
