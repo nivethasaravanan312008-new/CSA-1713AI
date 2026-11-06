@@ -1,0 +1,39 @@
+
+% Family Tree Program
+
+% Facts
+male(john).
+male(david).
+male(bob).
+
+female(susan).
+female(mary).
+female(alice).
+
+% Parent relationships
+parent(john, mary).
+parent(susan, mary).
+
+parent(john, david).
+parent(susan, david).
+
+parent(mary, alice).
+parent(david, bob).
+
+% Rules
+father(X, Y) :-
+    male(X),
+    parent(X, Y).
+
+mother(X, Y) :-
+    female(X),
+    parent(X, Y).
+
+sibling(X, Y) :-
+    parent(Z, X),
+    parent(Z, Y),
+    X \= Y.
+
+grandparent(X, Y) :-
+    parent(X, Z),
+    parent(Z, Y).
