@@ -1,0 +1,42 @@
+# Sentiment Analysis using NLP
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+
+# Sample dataset
+texts = [
+    "I love this product",
+    "This is amazing",
+    "Very happy with the service",
+    "The product is excellent",
+    "I hate this product",
+    "Very bad experience",
+    "The service is terrible",
+    "This is disappointing"
+]
+
+labels = [
+    "Positive", "Positive", "Positive", "Positive",
+    "Negative", "Negative", "Negative", "Negative"
+]
+
+# Convert text into numerical features
+vectorizer = TfidfVectorizer()
+X = vectorizer.fit_transform(texts)
+
+# Train the model
+model = LogisticRegression()
+model.fit(X, labels)
+
+# Test input
+test_text = ["The product is very good"]
+
+# Convert test text
+test_vector = vectorizer.transform(test_text)
+
+# Predict sentiment
+prediction = model.predict(test_vector)
+
+# Display result
+print("Input Text:", test_text[0])
+print("Sentiment:", prediction[0])
