@@ -1,0 +1,65 @@
+# Recommendation System using Collaborative Filtering
+
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+
+# User-item rating matrix
+ratings = pd.DataFrame({
+    'Movie1': [5, 4, 0, 5],
+    'Movie2': [4, 5, 0, 4],
+    'Movie3': [0, 0, 5, 4],
+    'Movie4': [0, 0, 4, 5],
+    'Movie5': [5, 4, 0, 0]
+}, index=['User1', 'User2', 'User3', 'User4'])
+
+# Calculate user similarity
+similarity = cosine_similarity(ratings)
+
+similarity_df = pd.DataFrame(
+    similarity,
+    index=ratings.index,
+    columns=ratings.index
+)
+
+# Target user
+target_user = 'User1'
+
+# Find similar users
+similar_users = similarity_df[target_user].sort_values(
+    ascending=False
+)
+
+print("User Similarity:")
+print(similar_users)
+
+# Recommend movies
+unrated_movies = ratings.loc[target_user]
+unrated_movies = unrated_movies[unrated_movies == 0].index
+
+recommendations = {}
+
+for movie in unrated_movies:
+    score = 0
+    total_similarity = 0
+
+    for user in ratings.index:
+        if user != target_user and ratings.loc[user, movie] > 0:
+            sim = similarity_df.loc[target_user, user]
+            score += sim * ratings.loc[user, movie]
+            total_similarity += sim
+
+    if total_similarity > 0:
+        recommendations[movie] = score / total_similarity
+
+# Sort recommendations
+recommendations = sorted(
+    recommendations.items(),
+    key=lambda x: x[1],
+    reverse=True
+)
+
+# Display recommendations
+print("\nRecommended Movies for", target_user)
+
+for movie, rating in recommendations:
+    print(movie, "Predicted Rating:", round(rating, 2))
