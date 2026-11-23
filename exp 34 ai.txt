@@ -1,0 +1,60 @@
+# Genetic Algorithm for Function Optimization
+
+import random
+import matplotlib.pyplot as plt
+
+# Objective function: maximize f(x) = -(x - 5)^2
+def fitness(x):
+    return -(x - 5) ** 2
+
+# Generate initial population
+population = [random.uniform(-10, 10) for _ in range(20)]
+
+generations = 100
+best_values = []
+
+# Genetic Algorithm
+for generation in range(generations):
+
+    # Evaluate fitness
+    population.sort(key=fitness, reverse=True)
+
+    # Store best solution
+    best_values.append(fitness(population[0]))
+
+    # Selection
+    parents = population[:10]
+
+    # Crossover and Mutation
+    new_population = parents.copy()
+
+    while len(new_population) < 20:
+        p1, p2 = random.sample(parents, 2)
+
+        # Crossover
+        child = (p1 + p2) / 2
+
+        # Mutation
+        if random.random() < 0.1:
+            child += random.uniform(-1, 1)
+
+        # Keep within range
+        child = max(-10, min(10, child))
+
+        new_population.append(child)
+
+    population = new_population
+
+# Best solution
+best_solution = max(population, key=fitness)
+
+print("Best Solution (x):", round(best_solution, 4))
+print("Maximum Fitness:", round(fitness(best_solution), 4))
+
+# Plot fitness over generations
+plt.plot(best_values)
+plt.xlabel("Generation")
+plt.ylabel("Fitness")
+plt.title("Genetic Algorithm Optimization")
+plt.grid(True)
+plt.show()
